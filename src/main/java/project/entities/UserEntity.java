@@ -14,6 +14,7 @@ public class UserEntity {
     private Integer id;//用户id
     private Set<DiscountEntity> discountEntities;//用户当前的套餐情况
     private Set<OrderEntity> orderEntities;//用户套餐记录情况
+    private Set<BillEntity> billEntities;//用户月账单
     private Integer call_month;//当月通话时长
     private Integer message_month;//当月短信数
     private Double local_flow_month;//当月使用的本地流量
@@ -84,5 +85,14 @@ public class UserEntity {
 
     public void setOrderEntities(Set<OrderEntity> orderEntities) {
         this.orderEntities = orderEntities;
+    }
+
+    @OneToMany(mappedBy = "userEntity",fetch = FetchType.EAGER)
+    public Set<BillEntity> getBillEntities() {
+        return billEntities;
+    }
+
+    public void setBillEntities(Set<BillEntity> billEntities) {
+        this.billEntities = billEntities;
     }
 }
