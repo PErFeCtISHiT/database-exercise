@@ -2,6 +2,7 @@ package project.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import project.dao.OrderRepository;
 
 /**
@@ -10,6 +11,7 @@ import project.dao.OrderRepository;
  * @date: create in 16:02 2018/10/12
  */
 @Service
+@Transactional
 public class OrderService extends PublicService {
     private final OrderRepository orderRepository;
 

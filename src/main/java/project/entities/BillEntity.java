@@ -2,7 +2,6 @@ package project.entities;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.util.Set;
 
 /**
  * @author: pis
@@ -19,10 +18,10 @@ public class BillEntity {
     private Integer message_month;//当月短信数
     private Double local_flow_month;//当月使用的本地流量
     private Double internal_flow_month;//当月使用的全国流量
-    private Double call_cost;//通话资费
-    private Double message_cost;//信息资费
-    private Double local_flow_cost;//本地流量资费
-    private Double internal_flow_cost;//全国流量资费
+    private Double call_cost;//通话资费(套餐外)
+    private Double message_cost;//信息资费(套餐外)
+    private Double local_flow_cost;//本地流量资费(套餐外)
+    private Double internal_flow_cost;//全国流量资费(套餐外)
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

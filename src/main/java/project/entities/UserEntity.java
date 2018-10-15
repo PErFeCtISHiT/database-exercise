@@ -31,7 +31,7 @@ public class UserEntity {
         this.id = id;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_discount", joinColumns = {@JoinColumn(referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(referencedColumnName = "ID")})
     public Set<DiscountEntity> getDiscountEntities() {
@@ -78,7 +78,7 @@ public class UserEntity {
         this.internal_flow_month = internal_flow_month;
     }
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE,fetch = FetchType.LAZY)
     public Set<OrderEntity> getOrderEntities() {
         return orderEntities;
     }
@@ -87,7 +87,7 @@ public class UserEntity {
         this.orderEntities = orderEntities;
     }
 
-    @OneToMany(mappedBy = "userEntity",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "userEntity",fetch = FetchType.LAZY)
     public Set<BillEntity> getBillEntities() {
         return billEntities;
     }

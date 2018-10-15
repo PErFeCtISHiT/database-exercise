@@ -1,12 +1,13 @@
 package project;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.transaction.annotation.Transactional;
 import project.entities.BillEntity;
 import project.entities.DiscountEntity;
 import project.entities.OrderEntity;
@@ -16,10 +17,9 @@ import project.service.OrderService;
 import project.service.UserService;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.util.*;
 
 /**
  * @author: pis
@@ -30,7 +30,17 @@ import java.util.TimerTask;
 @EntityScan(basePackages = "project.entities")
 @EnableJpaRepositories(basePackages = "project.dao")
 public class Main implements CommandLineRunner {
-    private static final Logger log = LoggerFactory.getLogger(Main.class);
+    public Main(){
+
+        try {
+            //将操作日志输出到文件（可选）(application.properties中spring.jpa.show-sql=false
+            PrintStream print=new PrintStream("sql.log");
+            //System.setOut(print);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+    private static final Logger log = Logger.getLogger(Main.class);
     @Resource
     private UserService userService;
     @Resource
@@ -44,8 +54,25 @@ public class Main implements CommandLineRunner {
     }
 
     @Override
+    @Transactional
     public void run(String... strings) {
-
+        Set<Integer> usersID = new HashSet<>();
+        while (usersID.size() < 10){//随机抽取10个用户
+            usersID.add((int)(Math.random() * 100000));
+        }
+        for(Integer id : usersID){
+            log.info("开始操作用户 " + id);
+            DiscountEntity discountEntity = (DiscountEntity) discountService.findByID(1);
+            UserEntity userEntity = (UserEntity) userService.findByID(id);
+            queryDiscount(userEntity);
+            queryOrder(userEntity);
+            orderDiscount(userEntity,discountEntity);
+            cancelDiscount(userEntity,discountEntity,0);
+            queryCallBill(userEntity);
+            queryFlowBill(userEntity);
+            queryMonthBill(userEntity);
+            log.info("用户 " + id + " 操作结束\n\n");
+        }
     }
 
     /**
@@ -94,7 +121,7 @@ public class Main implements CommandLineRunner {
             log.info("国内套餐余量: 0M");
         else
             log.info("国内套餐余量: " + internalFlow + "M");
-        log.info("查询套餐结束,用时: " + (System.currentTimeMillis() - startTime) + "毫秒");
+        log.info("查询套餐结束,用时: " + (System.currentTimeMillis() - startTime) + "毫秒\n");
     }
 
 
@@ -112,7 +139,7 @@ public class Main implements CommandLineRunner {
             DiscountEntity discountEntity = orderEntity.getDiscount();
             log.info("套餐类型: " + discountEntity.getName() + " 订购日期: " + orderEntity.getOrd_date());
         }
-        log.info("查询历史套餐结束,用时: " + (System.currentTimeMillis() - startTime) + "毫秒");
+        log.info("查询历史套餐结束,用时: " + (System.currentTimeMillis() - startTime) + "毫秒\n");
     }
 
     /**
@@ -137,7 +164,7 @@ public class Main implements CommandLineRunner {
             log.error("订购套餐失败");
             return;
         }
-        log.info("订购套餐结束,用时: " + (System.currentTimeMillis() - startTime) + "毫秒");
+        log.info("订购套餐结束,用时: " + (System.currentTimeMillis() - startTime) + "毫秒\n");
     }
 
     /**
@@ -165,7 +192,7 @@ public class Main implements CommandLineRunner {
         } else {//下个月更新
             startTimer(userEntity);
         }
-        log.info("退订套餐结束,用时: " + (System.currentTimeMillis() - startTime) + "毫秒");
+        log.info("退订套餐结束,用时: " + (System.currentTimeMillis() - startTime) + "毫秒\n");
     }
 
     /**
@@ -186,7 +213,7 @@ public class Main implements CommandLineRunner {
         Date date = new Date();
         Date monthIncDate = new Date(date.getYear(), (date.getMonth() + 1) % 12, 1);
         timer.schedule(task, monthIncDate);
-        log.info("退订完成，将于 " + monthIncDate + " 生效");
+        log.info("退订完成，将于 " + monthIncDate + " 生效\n");
     }
 
     /**
@@ -205,7 +232,7 @@ public class Main implements CommandLineRunner {
             callCost += billEntity.getCall_cost();
         }
         log.info("通话时长: " + callCount + " 分钟" + "套餐外通话资费" + callCost + " 元");
-        log.info("查询通话资费结束,用时: " + (System.currentTimeMillis() - startTime) + "毫秒");
+        log.info("查询通话资费结束,用时: " + (System.currentTimeMillis() - startTime) + "毫秒\n");
     }
 
 
@@ -230,7 +257,7 @@ public class Main implements CommandLineRunner {
         }
         log.info("本地流量: " + localFlowCount + " M " + "本地流量资费" + localFlowCost + " 元");
         log.info("国内流量: " + internalFlowCount + " M " + "国内流量资费" + internalFlowCost + " 元");
-        log.info("查询流量资费结束,用时: " + (System.currentTimeMillis() - startTime) + "毫秒");
+        log.info("查询流量资费结束,用时: " + (System.currentTimeMillis() - startTime) + "毫秒\n");
     }
 
     /**
@@ -260,7 +287,7 @@ public class Main implements CommandLineRunner {
         log.info("本地流量: " + localFlowCount + " M");
         log.info("国内流量: " + internalFlowCount + " M");
         log.info("总资费: " + totalCost + " 元");
-        log.info("查询月账单结束,用时: " + (System.currentTimeMillis() - startTime) + "毫秒");
+        log.info("查询月账单结束,用时: " + (System.currentTimeMillis() - startTime) + "毫秒\n");
     }
 
 }
