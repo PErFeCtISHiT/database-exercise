@@ -3,7 +3,7 @@ package project.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.dao.BillRepostiory;
+import project.dao.BillRepository;
 
 /**
  * @author: pis
@@ -13,11 +13,11 @@ import project.dao.BillRepostiory;
 @Service
 @Transactional
 public class BillService extends PublicService{
-    private final BillRepostiory billRepostiory;
+    private final BillRepository billRepository;
 
     @Autowired
-    public BillService(BillRepostiory billRepostiory) {
-        this.repository = billRepostiory;
-        this.billRepostiory = billRepostiory;
+    public BillService(BillRepository billRepository) {
+        this.repository = billRepository;
+        this.billRepository = billRepository;
     }
 }

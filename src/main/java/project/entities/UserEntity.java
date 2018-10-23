@@ -15,10 +15,10 @@ public class UserEntity {
     private Set<DiscountEntity> discountEntities;//用户当前的套餐情况
     private Set<OrderEntity> orderEntities;//用户套餐记录情况
     private Set<BillEntity> billEntities;//用户月账单
-    private Integer call_month;//当月通话时长
-    private Integer message_month;//当月短信数
-    private Double local_flow_month;//当月使用的本地流量
-    private Double internal_flow_month;//当月使用的全国流量
+    private Integer call_month;//当月目前通话时长
+    private Integer message_month;//当月目前短信数
+    private Double local_flow_month;//当月目前使用的本地流量
+    private Double internal_flow_month;//当月目前使用的全国流量
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
